@@ -7,12 +7,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class ConsumoAPI {
-    String endereco = "http://gutendex.com/books/?search=";
-
-    public String chamarAPI(String buscaLivro){
+    public String chamarAPI(String endereco){
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(endereco + buscaLivro))
+                .uri(URI.create(endereco))
                 .build();
         HttpResponse<String> response = null;
         try {

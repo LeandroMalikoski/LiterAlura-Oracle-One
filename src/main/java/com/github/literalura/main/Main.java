@@ -1,6 +1,8 @@
 package com.github.literalura.main;
 
-import com.github.literalura.model.DadosLivro;
+import com.github.literalura.model.*;
+import com.github.literalura.repository.AutorRepository;
+import com.github.literalura.repository.LivroRepository;
 import com.github.literalura.service.ConsumoAPI;
 import com.github.literalura.service.ConverteDados;
 
@@ -13,14 +15,23 @@ public class Main {
 
     private ConverteDados converteDados = new ConverteDados();
 
+    private String endereco = "http://gutendex.com/books/?search=";
 
+    LivroRepository repositoryLivro;
 
-    public void Menu(){
+    AutorRepository repositoryAutor;
+
+    public Main(LivroRepository repository, AutorRepository repositoryAutor) {
+        this.repositoryLivro = repository;
+        this.repositoryAutor = repositoryAutor;
+    }
+
+    public void Menu() {
         int op = -1;
-        while(op != 0) {
+        while (op != 0) {
             System.out.printf("""
-                    
-                    
+                                        
+                                        
                        
                     *********** Menu ***********
                                     
@@ -55,12 +66,29 @@ public class Main {
     }
 
     private void buscarLivro() {
-        System.out.println("Digite o nome do livro a ser buscado: ");
-        String buscaLivro = scanner.nextLine();
-        scanner.nextLine();
-        var json = consumoAPI.chamarAPI(buscaLivro);
-        System.out.println(json);
-        DadosLivro livro = converteDados.obterDados(json, DadosLivro.class);
-        System.out.println(livro);
+//      System.out.println("Digite o nome do livro a ser buscado: ");
+//      String buscaLivro = scanner.nextLine();
+//      scanner.nextLine();
+        endereco += "dom+casmurro";
+        var json = consumoAPI.chamarAPI(endereco.replace(" ", "+"));
+        DadosBusca dadosBusca = converteDados.obterDados(json, DadosBusca.class);
+        Livro livro = new Livro(dadosBusca);
+        Autor autor = new Autor(dadosBusca);
+        System.out.println(autor);
+        if (repositoryLivro.existsByTitulo(livro.getTitulo())) {
+            System.out.println("**** " + livro.getTitulo() + " ****");
+            System.out.println("Autor = " + autor.getNome());
+            System.out.println("Idioma = " + livro.getLinguagem());
+            System.out.println("Downloads = " + livro.getDownloads());
+            System.out.println("Este livro já está cadastrado");
+        } else {
+            System.out.println("**** " + livro.getTitulo() + " ****");
+            System.out.println("Autor = " + autor.getNome());
+            System.out.println("Idioma = " + livro.getLinguagem());
+            System.out.println("Downloads = " + livro.getDownloads());
+            repositoryAutor.save(autor);
+            livro.setAutor(autor);
+            repositoryLivro.save(livro);
+        }
     }
 }

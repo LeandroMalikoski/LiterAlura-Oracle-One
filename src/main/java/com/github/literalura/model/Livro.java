@@ -2,27 +2,49 @@ package com.github.literalura.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "livros")
 public class Livro {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true, nullable = false)
     private String titulo;
+    @Column(unique = true, nullable = false)
     private String autor;
     private String linguagem;
     private Long downloads;
 
-    @Override
-    public String toString() {
-        return "id=" + id +
-               ", titulo='" + titulo + '\'' +
-               ", autor='" + autor + '\'' +
-               ", linguagem='" + linguagem + '\'' +
-               ", downloads=" + downloads;
+    public Livro() {
     }
 
-    public Livro() {}
+    @ManyToOne
+    private Autor autores;
+
+    public Livro(DadosBusca dadosBusca) {
+        if (dadosBusca.results() != null && !dadosBusca.results().isEmpty()) {
+            DadosLivro dadosLivro = dadosBusca.results().get(0);
+            this.titulo = dadosLivro.titulo();
+            this.autor = String.valueOf(dadosLivro.autor());
+            this.linguagem = String.valueOf(dadosLivro.linguagem());
+            this.downloads = dadosLivro.downloads();
+        } else {
+            throw new IllegalArgumentException("O array 'results' está vazio ou é nulo.");
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "*********** " + titulo + " ***********" +
+               "\n Autor = " + autor +
+               "\n Idioma = " + linguagem +
+               "\n Downloads = " + downloads;
+    }
+
+    public Livro(String titulo, List<DadosAutor> autor, List<String> linguagem, Long downloads) {
+    }
 
     public Livro(Long id, String titulo, String autor, String linguagem, Long downloads) {
         this.id = id;
@@ -52,8 +74,8 @@ public class Livro {
         return autor;
     }
 
-    public void setAutor(String autor) {
-        this.autor = autor;
+    public void setAutor(Autor autor) {
+        this.autor = String.valueOf(autor);
     }
 
     public String getLinguagem() {
