@@ -59,13 +59,29 @@ public class Main {
                     listarAutoresRegistrados();
                     break;
                 case 4:
-                    //metodo
+                    listarAutoresVivosEmDeterminadoAno();
                     break;
                 case 5:
-                    //metodo
+                    listarLivrosEmDeterminadoIdioma();
                     break;
             }
         }
+    }
+
+    private void listarLivrosEmDeterminadoIdioma() {
+        System.out.println("Digite o idioma escolhido: ");
+        System.out.println("es = espanhol");
+        System.out.println("en = inglês");
+        System.out.println("fr = francês");
+        System.out.println("pt = português");
+        String idioma = scanner.nextLine();
+        System.out.println(livroService.listarlivrosPorIdioma(idioma));
+    }
+
+    private void listarAutoresVivosEmDeterminadoAno() {
+        System.out.println("Digite o ano escolhido: ");
+        var ano = scanner.nextInt();
+        System.out.println(autorService.listarAutoresVivosAno(ano));
     }
 
     private void listarAutoresRegistrados() {
@@ -79,8 +95,6 @@ public class Main {
     private void buscarLivro() {
         System.out.println("Digite o nome do livro a ser buscado: ");
         String buscaLivro = scanner.nextLine().trim();
-        scanner.nextLine();
-        System.out.println("Busca" + buscaLivro);
         var json = consumoAPI.chamarAPI(endereco + buscaLivro.replace(" ", "+"));
         DadosBusca dadosBusca = converteDados.obterDados(json, DadosBusca.class);
         System.out.println(dadosBusca);

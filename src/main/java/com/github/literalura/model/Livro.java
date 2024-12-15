@@ -28,7 +28,7 @@ public class Livro {
                "Downloads = " + downloads + "\n" + "------\n\n";
     }
 
-    @ManyToMany()
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "livros_autores",
             joinColumns = @JoinColumn(name = "livros_id"),

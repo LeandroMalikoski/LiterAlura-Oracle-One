@@ -20,4 +20,7 @@ public interface AutorRepository extends JpaRepository<Autor, Long> {
     List<Livro> findLivrosByAutorId(@Param("autorId") Long autorId);
 
     Optional<Autor> findByName(String autorNome);
+
+    @Query("SELECT a FROM Autor a WHERE a.birth_year <= :ano AND (a.death_year >= :ano OR a.death_year IS NULL)")
+    List<Autor> findByAge(int ano);
 }

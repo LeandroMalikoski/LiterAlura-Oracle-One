@@ -29,21 +29,17 @@ public class LivroService {
             System.exit(0);
             return;
         }
-            Livro livro = new Livro(dadosLivro);
-            List<Autor> autores = dadosLivro.autor().stream()
-                    .map(dadosAutor -> buscarOuSalvarAutor(dadosAutor))
-                    .collect(Collectors.toList());
-            livro.setAutores(autores);
-            livroRepository.save(livro);
-            System.out.println("Livro cadastrado com sucesso: " + livro.getTitulo());
+        Livro livro = new Livro(dadosLivro);
+        List<Autor> autores = dadosLivro.autor().stream().map(dadosAutor -> buscarOuSalvarAutor(dadosAutor)).collect(Collectors.toList());
+        livro.setAutores(autores);
+        livroRepository.save(livro);
+        System.out.println("Livro cadastrado com sucesso: " + livro.getTitulo());
     }
 
     @Transactional
     public List<String> listarLivros() {
         List<Livro> livros = livroRepository.findAll();
-        return livros.stream()
-                .map(Livro::toString)
-                .collect(Collectors.toList());
+        return livros.stream().map(Livro::toString).collect(Collectors.toList());
     }
 
     @Transactional
@@ -67,24 +63,12 @@ public class LivroService {
 
     @Transactional
     public List<Livro> obterLivrosPorAutor(String autorNome) {
-        Autor autor = autorRepository.findByName(autorNome)
-                .orElseThrow(() -> new RuntimeException("Autor não encontrado"));
+        Autor autor = autorRepository.findByName(autorNome).orElseThrow(() -> new RuntimeException("Autor não encontrado"));
         return livroRepository.findLivrosByAutorId(autor.getId());
     }
 
-//    private Autor associarLivroAutor(){
-//        Autor autor = new Autor();
-//        autor = (Autor) livroRepository.findAll();
-//        autor.setLivros(autor.getLivros());
-//        return autor;
-//    }
-
     private Autor buscarOuSalvarAutor(DadosAutor dadosAutor) {
-        return autorRepository.findByNameAndBirthYearAndDeathYear(
-                dadosAutor.nome(),
-                dadosAutor.nascimento(),
-                dadosAutor.morte()
-        ).orElseGet(() -> {
+        return autorRepository.findByNameAndBirthYearAndDeathYear(dadosAutor.nome(), dadosAutor.nascimento(), dadosAutor.morte()).orElseGet(() -> {
             Autor novoAutor = new Autor();
             novoAutor.setName(dadosAutor.nome());
             novoAutor.setBirth_year(dadosAutor.nascimento());
@@ -93,4 +77,17 @@ public class LivroService {
         });
     }
 
+    public String listarlivrosPorIdioma(String idioma) {
+        List<Livro> livros = livroRepository.findByLinguagem(idioma);
+        for (Livro livro : livros) {
+            System.out.println("\nLivro = " + livro.getTitulo() + "\n" +
+                                 "Autor = " + livro.getAutores().get(0).getName() + "\n" +
+                                 "Linguagem = " + livro.getLinguagem() + "\n" +
+                                 "Downloads = " + livro.getDownloads());
+        }
+        if (livros.isEmpty()) {
+            System.out.println("Nenhum livro encontrado para este idioma");
+        }
+        return " ";
+    }
 }
