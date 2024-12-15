@@ -1,9 +1,6 @@
 package com.github.literalura.main;
 
-import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
 import com.github.literalura.model.*;
-import com.github.literalura.repository.AutorRepository;
-import com.github.literalura.repository.LivroRepository;
 import com.github.literalura.service.AutorService;
 import com.github.literalura.service.ConsumoAPI;
 import com.github.literalura.service.ConverteDados;
@@ -11,7 +8,10 @@ import com.github.literalura.service.LivroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.DoubleSummaryStatistics;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 @Component
 public class Main {
@@ -42,6 +42,8 @@ public class Main {
                     3 - Listar autores registrados
                     4 - Listar autores vivos em um determinado ano
                     5 - Listar livros em um determinado idioma
+                    6 - Listar 10 livros mais baixados
+                    7 - Listar estatísticas de downloads do banco de dados 
                     0 - Sair
                                     
                     Insira a opção desejada:            
@@ -64,8 +66,29 @@ public class Main {
                 case 5:
                     listarLivrosEmDeterminadoIdioma();
                     break;
+                case 6:
+                    listarTop10();
+                    break;
+                case 7:
+                    listarEstatisticas();
+                    break;
             }
         }
+    }
+
+    private void listarEstatisticas() {
+        List<Livro> livros = livroService.BuscarEstatisticas();
+        DoubleSummaryStatistics stats = livros.stream()
+                .collect(Collectors.summarizingDouble(livro -> livro.getDownloads()));
+        System.out.println("Quantia de livros   = " + stats.getCount());
+        System.out.println("Soma de downloads   = " + stats.getSum());
+        System.out.println("Média de downloads  = " + stats.getAverage());
+        System.out.println("Livro menos baixado = " + stats.getMin());
+        System.out.println("Livro mais baixado  = " + stats.getMax());
+    }
+
+    private void listarTop10() {
+        System.out.println(livroService.listarTop10BancoDados(10));
     }
 
     private void listarLivrosEmDeterminadoIdioma() {
@@ -105,6 +128,5 @@ public class Main {
             }
         }
     }
-
 
 }

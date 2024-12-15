@@ -20,4 +20,7 @@ public interface LivroRepository extends JpaRepository<Livro, Long> {
 
     @Query("SELECT l FROM Livro l WHERE l.linguagem LIKE %:idioma%")
     List<Livro> findByLinguagem(String idioma);
+
+    @Query("SELECT l FROM Livro l ORDER BY l.downloads DESC")
+    List<Livro> findByDownload(Integer download);
 }

@@ -16,7 +16,7 @@ public class Autor {
     private Integer birth_year;
     private Integer death_year;
 
-   @ManyToMany()
+    @ManyToMany()
     private List<Livro> livros = new ArrayList<>();
 
     @Override

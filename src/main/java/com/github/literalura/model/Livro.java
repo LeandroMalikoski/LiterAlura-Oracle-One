@@ -37,10 +37,10 @@ public class Livro {
     private List<Autor> autores;
 
     public Livro(DadosLivro dadosLivro) {
-            this.titulo = dadosLivro.titulo();
-            this.autores = new ArrayList<>();
-            this.linguagem = String.valueOf(dadosLivro.linguagem());
-            this.downloads = dadosLivro.downloads();
+        this.titulo = dadosLivro.titulo();
+        this.autores = new ArrayList<>();
+        this.linguagem = String.valueOf(dadosLivro.linguagem());
+        this.downloads = dadosLivro.downloads();
     }
 
     public Long getId() {

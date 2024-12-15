@@ -90,4 +90,19 @@ public class LivroService {
         }
         return " ";
     }
+
+    public String listarTop10BancoDados(Integer download) {
+        List<Livro> livros = livroRepository.findByDownload(download).stream().limit(10).collect(Collectors.toList());
+        for (Livro livro : livros) {
+            System.out.println("\nLivro = " + livro.getTitulo() + "\n" +
+                               "Autor = " + livro.getAutores().get(0).getName() + "\n" +
+                               "Linguagem = " + livro.getLinguagem() + "\n" +
+                               "Downloads = " + livro.getDownloads());
+        }
+        return "";
+    }
+
+    public List<Livro> BuscarEstatisticas() {
+    return livroRepository.findAll();
+    }
 }
