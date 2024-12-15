@@ -6,46 +6,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "autores")
+@Table(name = "autor")
 public class Autor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true, nullable = false)
-    private String nome;
+    private String name;
     private Integer birth_year;
     private Integer death_year;
 
-    public Autor(DadosBusca dadosBusca) {
-        if (dadosBusca.results() != null && !dadosBusca.results().isEmpty()) {
-            DadosLivro dadosLivro = dadosBusca.results().get(0);
-            this.nome = dadosLivro.autor().get(0).nome();
-            this.birth_year = dadosLivro.autor().get(0).nascimento();
-            this.death_year = dadosLivro.autor().get(0).morte();
-        } else {
-            throw new IllegalArgumentException("O array 'results' está vazio ou é nulo.");
-        }
-    }
-
-
+   @ManyToMany()
+    private List<Livro> livros = new ArrayList<>();
 
     @Override
     public String toString() {
-        return "nome='" + nome + '\'' +
-               ", birth_year=" + birth_year +
-               ", death_year=" + death_year;
-    }
-
-    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Livro> livros = new ArrayList<Livro>();
-
-    public Autor() {}
-
-    public Autor(Long id, String nome, Integer birth_year, Integer death_year) {
-        this.id = id;
-        this.nome = nome;
-        this.birth_year = birth_year;
-        this.death_year = death_year;
+        return name + "\n" +
+               "Nascimento  = " + birth_year + "\n" +
+               "Falecimento = " + death_year + "\n" +
+               "Livros      = ";
     }
 
     public Long getId() {
@@ -56,12 +35,12 @@ public class Autor {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Integer getBirth_year() {
@@ -79,4 +58,13 @@ public class Autor {
     public void setDeath_year(Integer death_year) {
         this.death_year = death_year;
     }
+
+    public List<Livro> getLivros() {
+        return livros;
+    }
+
+    public void setLivros(List<Livro> livros) {
+        this.livros = livros;
+    }
+
 }

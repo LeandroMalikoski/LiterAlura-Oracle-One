@@ -2,6 +2,7 @@ package com.github.literalura.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,46 +13,34 @@ public class Livro {
     private Long id;
     @Column(unique = true, nullable = false)
     private String titulo;
-    @Column(unique = true, nullable = false)
-    private String autor;
+    //@Column(unique = true, nullable = false)
     private String linguagem;
     private Long downloads;
 
     public Livro() {
     }
 
-    @ManyToOne
-    private Autor autores;
-
-    public Livro(DadosBusca dadosBusca) {
-        if (dadosBusca.results() != null && !dadosBusca.results().isEmpty()) {
-            DadosLivro dadosLivro = dadosBusca.results().get(0);
-            this.titulo = dadosLivro.titulo();
-            this.autor = String.valueOf(dadosLivro.autor());
-            this.linguagem = String.valueOf(dadosLivro.linguagem());
-            this.downloads = dadosLivro.downloads();
-        } else {
-            throw new IllegalArgumentException("O array 'results' está vazio ou é nulo.");
-        }
-    }
-
     @Override
     public String toString() {
-        return "*********** " + titulo + " ***********" +
-               "\n Autor = " + autor +
-               "\n Idioma = " + linguagem +
-               "\n Downloads = " + downloads;
+        return "\n------\nTitulo    = " + titulo + "\n" +
+               "Autores   = " + autores.get(0).getName() + "\n" +
+               "Linguagem = " + linguagem + "\n" +
+               "Downloads = " + downloads + "\n" + "------\n\n";
     }
 
-    public Livro(String titulo, List<DadosAutor> autor, List<String> linguagem, Long downloads) {
-    }
+    @ManyToMany()
+    @JoinTable(
+            name = "livros_autores",
+            joinColumns = @JoinColumn(name = "livros_id"),
+            inverseJoinColumns = @JoinColumn(name = "autores_id")
+    )
+    private List<Autor> autores;
 
-    public Livro(Long id, String titulo, String autor, String linguagem, Long downloads) {
-        this.id = id;
-        this.titulo = titulo;
-        this.autor = autor;
-        this.linguagem = linguagem;
-        this.downloads = downloads;
+    public Livro(DadosLivro dadosLivro) {
+            this.titulo = dadosLivro.titulo();
+            this.autores = new ArrayList<>();
+            this.linguagem = String.valueOf(dadosLivro.linguagem());
+            this.downloads = dadosLivro.downloads();
     }
 
     public Long getId() {
@@ -70,14 +59,6 @@ public class Livro {
         this.titulo = titulo;
     }
 
-    public String getAutor() {
-        return autor;
-    }
-
-    public void setAutor(Autor autor) {
-        this.autor = String.valueOf(autor);
-    }
-
     public String getLinguagem() {
         return linguagem;
     }
@@ -92,5 +73,13 @@ public class Livro {
 
     public void setDownloads(Long downloads) {
         this.downloads = downloads;
+    }
+
+    public List<Autor> getAutores() {
+        return autores;
+    }
+
+    public void setAutores(List<Autor> autores) {
+        this.autores = autores;
     }
 }
