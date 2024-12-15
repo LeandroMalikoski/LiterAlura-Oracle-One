@@ -120,7 +120,10 @@ public class Main {
         String buscaLivro = scanner.nextLine().trim();
         var json = consumoAPI.chamarAPI(endereco + buscaLivro.replace(" ", "+"));
         DadosBusca dadosBusca = converteDados.obterDados(json, DadosBusca.class);
-        System.out.println(dadosBusca);
+        if (dadosBusca.results().isEmpty()){
+            System.out.println("Livro não encontrado");
+            System.exit(0);
+        }
         if (dadosBusca.results() != null && !dadosBusca.results().isEmpty()) {
             for (DadosLivro dadosLivro : dadosBusca.results()) {
                 System.out.println(dadosLivro);
